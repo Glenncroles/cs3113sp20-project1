@@ -285,8 +285,8 @@ int main(int argc, char** argv)
 	/* Start with the empty list */
 	struct Link* head = NULL;
 
-	//bringing in the file this is for testing
-	FILE* input = fopen("OStest2.txt", "r");
+	////bringing in the file this is for testing
+	//FILE* input = fopen("OStest2.txt", "r");
 
 	/**
 	 * reading in the file
