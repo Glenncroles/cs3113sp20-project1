@@ -285,25 +285,24 @@ int main(int argc, char** argv)
 	/* Start with the empty list */
 	struct Link* head = NULL;
 
-	////bringing in the file this is for testing
-	//FILE* input = fopen("OStest2.txt", "r");
+	//bringing in the file this is for testing
+	FILE* input = fopen(argv[1], "r");
 
 	/**
 	 * reading in the file
 	 * putting the pid burst and priority into the linked list
 	 */
-	fscanf(stdin, "%d", &P);
-        fscanf(stdin, "%d", &p);
-        fscanf(stdin, "%d", &N);
+	fscanf(input, "%d", &P);
+	fscanf(input, "%d", &p);
+	fscanf(input, "%d", &N);
 
-        while ((fgetc(stdin)) != EOF)
-        {
-                fscanf(stdin, "%d", &PID);
-                fscanf(stdin, "%d", &burst);
-                fscanf(stdin, "%d", &priority);
+	while (fscanf(input, "%d", &PID) != EOF)
+	{
+		fscanf(input, "%d", &burst);
+		fscanf(input, "%d", &priority);
 
-                insert(&head, PID, burst, priority);
-        }
+		insert(&head, PID, burst, priority);
+	}
 
 	printf("%d\n", p);
 	nonVolantary(head, p, N);
