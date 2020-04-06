@@ -188,14 +188,16 @@ void turnwaitresp(struct Link *link, int p)
 
 	for(int i = 0; i < tsize; i++)
 	{
+		struct Link *link1 = getLink(link, i);
+
 		/**adding current burst to total burst**/
-		totalBurst += getLink(link, i)->burst;
+		totalBurst += link1->burst;
 
 		/**for loop to loop throught the rest of the linkedList**/
 		for(int j = i+1; j < tsize; j++)
 		{
 			/**if its the last occurance of our pid calculate**/
-			if(getLink(link, i)->pid != getLink(link, j)->pid)
+			if(link1->pid != getLink(link, j)->pid)
 			{
 				flag = 1;
 			}
@@ -210,24 +212,24 @@ void turnwaitresp(struct Link *link, int p)
 		{
 			if(flags[i] == 1)
 			{
-				turn[getLink(link, i)->pid] = totalBurst;
-				wait[getLink(link, i)->pid] = arrival;
-				ret[getLink(link, i)->pid] = totalBurst - arrival;
+				turn[link1->pid] = totalBurst;
+				wait[link1->pid] = arrival;
+				ret[link1->pid] = totalBurst - arrival;
 				continue;
 			}
 
-			turn[getLink(link, i)->pid] = totalBurst;
-			wait[getLink(link, i)->pid] = arrival;
-			ret[getLink(link, i)->pid] = totalBurst - arrival;
+			turn[link1->pid] = totalBurst;
+			wait[link1->pid] = arrival;
+			ret[link1->pid] = totalBurst - arrival;
 			arrival = totalBurst;
 		}
 		if(flag == 0)
 		{
-			if(getLink(link, i)->next == NULL)
+			if(link1->next == NULL)
 			{
-				turn[getLink(link, i)->pid] = totalBurst;
-				wait[getLink(link, i)->pid] = arrival;
-				ret[getLink(link, i)->pid] = totalBurst - arrival;
+				turn[link1->pid] = totalBurst;
+				wait[link1->pid] = arrival;
+				ret[link1->pid] = totalBurst - arrival;
 			}
 			continue;
 		}
