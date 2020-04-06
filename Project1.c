@@ -114,7 +114,7 @@ void nonVolantary(struct Link *link, int p, int N)
 	int nonVol = 0;
 	int count = 0;
 
-	for(int i = 0; i < size(link)-1; i++)
+	for(int i = 0; i < N-1; i++)
 	{
 		if(getLink(link, i)->pid == getLink(link, i+1)->pid)
 		{
@@ -160,7 +160,7 @@ void throughput(struct Link *link, int p)
  * turnaround(head, p)
  * Completion Time - Arrival Time
  */
-void turnwaitresp(struct Link *link, int p)
+void turnwaitresp(struct Link *link, int p, int N)
 {
 
 	/**
@@ -171,10 +171,7 @@ void turnwaitresp(struct Link *link, int p)
 	double waverage = 0.0;
 	double raverage = 0.0;
 	int totalBurst = 0;
-	int tsize = size(link);
-	int turn[p+1];
-	int wait[p+1];
-	int ret[p+1];
+	int tsize = N;
 	int arrival = 0;
 	int sum = 0;
 	int wsum = 0;
@@ -185,7 +182,6 @@ void turnwaitresp(struct Link *link, int p)
 	{
 		flags[i] = 0;
 	}
-	ret[0] = 0;
 
 	int PID[tsize];
 	int burst[tsize];
@@ -222,38 +218,27 @@ void turnwaitresp(struct Link *link, int p)
 		{
 			if(flags[i] == 1)
 			{
-				turn[PID[i]] = totalBurst;
-				wait[PID[i]] = arrival;
-				ret[PID[i]] = totalBurst - arrival;
+				sum += totalBurst;
+				wsum += arrival;
+				rsum += totalBurst - arrival;
 				continue;
 			}
 
-			turn[PID[i]] = totalBurst;
-			wait[PID[i]] = arrival;
-			ret[PID[i]] = totalBurst - arrival;
+			sum += totalBurst;
+			wsum += arrival;
+			rsum += totalBurst - arrival;
 			arrival = totalBurst;
 		}
 		if(flag == 0)
 		{
 			if(link1->next == NULL)
 			{
-				turn[PID[i]] = totalBurst;
-				wait[PID[i]] = arrival;
-				ret[PID[i]] = totalBurst - arrival;
+				sum += totalBurst;
+				wsum += arrival;
+				rsum += totalBurst - arrival;
 			}
 			continue;
 		}
-	}
-
-	for(int i = 1; i < p+1; i++)
-	{
-
-		sum += turn[i];
-		wsum += wait[i];
-	}
-	for(int i = 0; i < p+1; i++)
-	{
-		rsum += ret[i];
 	}
 
 
@@ -298,7 +283,7 @@ int main(int argc, char** argv)
 	struct Link* head = NULL;
 
 	//bringing in the file this is for testing
-	FILE* input = fopen(argv[1], "r");
+	FILE* input = fopen("OStest1.txt", "r");
 
 	/**
 	 * reading in the file
@@ -308,8 +293,9 @@ int main(int argc, char** argv)
 	fscanf(input, "%d", &p);
 	fscanf(input, "%d", &N);
 
-	while (fscanf(input, "%d", &PID) != EOF)
+	while ((fgetc(input)) != EOF)
 	{
+		fscanf(input, "%d", &PID);
 		fscanf(input, "%d", &burst);
 		fscanf(input, "%d", &priority);
 
@@ -320,7 +306,7 @@ int main(int argc, char** argv)
 	nonVolantary(head, p, N);
 	printf("%.02f\n", CPU_Utilization);
 	throughput(head, p);
-	turnwaitresp(head, p);
+	turnwaitresp(head, p, N);
 
 
 	return 0;
