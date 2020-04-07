@@ -57,20 +57,6 @@ void insert(struct Link** start, int in_pid, int in_burst, int in_priority)
 	return;
 }
 
-/**
- * A simple size method for my linked list
- */
-int size(struct Link *link)
-{
-	int size = 0;
-	while (link != NULL)
-	{
-		size++;
-		link = link->next;
-	}
-	return size;
-}
-
 
 /**
  * getting the link of a certain posistion
@@ -91,40 +77,6 @@ struct Link *getLink(struct Link *link, int index)
 
 	return link;
 
-}
-// This function prints contents of linked list starting from begging to end
-void printLinks(struct Link *link)
-{
-	//TODO maybe???? i dont htink so
-	while (link != NULL)
-	{
-		printf("%d %d %d\n", link->pid, link->burst, link->priority);
-		link = link->next;
-	}
-}
-
-
-/**
- * nonVolantary
- * TODO this calculation is (N-backtoback)-p
- */
-void nonVolantary(struct Link *link, int p, int N)
-{
-	/**This is for the printed amount**/
-	int nonVol = 0;
-	int count = 0;
-
-	for(int i = 0; i < N-1; i++)
-	{
-		if(getLink(link, i)->pid == getLink(link, i+1)->pid)
-		{
-			count++;
-		}
-	}
-
-	nonVol = (N-count)-p;
-
-	printf("%d\n", nonVol);
 }
 
 
@@ -227,6 +179,7 @@ void turnwaitresp(struct Link *link, int p, int N)
 		printf("0");
 	else
 		printf("%d\n", nonVol);
+
 
 	printf("100.00\n");
 
