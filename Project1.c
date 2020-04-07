@@ -58,6 +58,7 @@ void insert(struct Link** start, int in_pid, int in_burst, int in_priority)
 }
 
 
+
 /**
  * getting the link of a certain posistion
  */
@@ -80,13 +81,39 @@ struct Link *getLink(struct Link *link, int index)
 }
 
 
+int* flagss(struct Link *link, int p, int N, int *flags)
+{
+	for(int i = 1; i < p+1;i++)
+	{
+		flags[i] = 0;
+	}
+	for(int i = 0; i < N; i++)
+	{
+		struct Link *link1 = getLink(link, i);
+
+
+		/**for loop to loop through the rest of the linkedList**/
+		for(int j = i+1; j < N; j++)
+		{
+
+			struct Link* link2 = getLink(link, j);
+
+			/**if its the last occurance of our pid calculate**/
+			if(link1->pid == link2->pid)
+			{
+				flags[link2->pid] = 1;
+			}
+		}
+	}
+	return flags;
+}
+
 /**
  * turnaround(head, p)
  * Completion Time - Arrival Time
  */
 void turnwaitresp(struct Link *link, int p, int N)
 {
-
 	/**
 	 * average
 	 * total burst time
@@ -103,14 +130,12 @@ void turnwaitresp(struct Link *link, int p, int N)
 	int wsum = 0;
 	int rsum = 0;
 	int flag = 0;
-	int flags[p+1];
-	for(int i = 1; i < p+1;i++)
-	{
-		flags[i] = 0;
-	}
+	int flagssss[N];
+	int* flags = flagss(link,p,N,flagssss);
 
 
-	for(int i = 0; i < tsize; i++)
+
+	for(int i = 0; i < N; i++)
 	{
 		struct Link *link1 = getLink(link, i);
 
@@ -118,34 +143,8 @@ void turnwaitresp(struct Link *link, int p, int N)
 		/**adding current burst to total burst**/
 		totalBurst += link1->burst;
 
-		/**for loop to loop throught the rest of the linkedList**/
-		for(int j = i+1; j < tsize; j++)
-		{
 
-			struct Link* link2 = getLink(link, j);
-
-			/**if its the last occurance of our pid calculate**/
-			if(link1->pid != link2->pid)
-			{
-				flag = 1;
-			}
-			else
-			{
-				flag = 0;
-				flags[link2->pid] = 1;
-			}
-		}
-
-		if(link1->next != NULL)
-		{
-			if(link1->pid == link1->next->pid)
-			{
-				count++;
-			}
-		}
-
-
-		if(flag == 1)
+		if(flags[link1->pid] == 0)
 		{
 			if(flags[i] == 1)
 			{
@@ -154,13 +153,12 @@ void turnwaitresp(struct Link *link, int p, int N)
 				rsum += totalBurst - arrival;
 				continue;
 			}
-
 			sum += totalBurst;
 			wsum += arrival;
 			rsum += totalBurst - arrival;
 			arrival = totalBurst;
 		}
-		if(flag == 0)
+		else
 		{
 			if(link1->next == NULL)
 			{
@@ -171,8 +169,16 @@ void turnwaitresp(struct Link *link, int p, int N)
 			continue;
 		}
 
-
+		if(link1->next != NULL)
+		{
+			if(link1->pid == link1->next->pid)
+			{
+				count++;
+			}
+		}
 	}
+
+
 
 	nonVol = (N-count)-p;
 	if(nonVol < 0)
@@ -190,6 +196,7 @@ void turnwaitresp(struct Link *link, int p, int N)
 	average = (double)sum/(double)p;
 	waverage = (double)wsum/(double)p;
 	raverage = (double)rsum/(double)p;
+
 	printf("%.02f\n", average);
 	printf("%.02f\n", waverage);
 	printf("%.02f\n", raverage);
@@ -245,7 +252,6 @@ int main(int argc, char** argv)
 
 	printf("%d\n", p);
 	turnwaitresp(head, p, N);
-
 
 	return 0;
 }
