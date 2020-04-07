@@ -278,7 +278,7 @@ int main(int argc, char** argv)
 		insert(&head, PID, burst, priority);
 	}
 
-	printLinks(head);
+	//printLinks(head);
 
 	printf("%d\n", p);
 	turnwaitresp(head, p, N);
