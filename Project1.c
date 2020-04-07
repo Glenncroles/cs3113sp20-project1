@@ -16,6 +16,7 @@ struct Link
 	int burst;
 	int priority;
 	int duplicate;
+	int lastDup;
 	struct Link *next;
 };
 
@@ -35,6 +36,7 @@ void insert(struct Link** start, int in_pid, int in_burst, int in_priority)
 	nlink->pid = in_pid;
 	nlink->priority = in_priority;
 	nlink->duplicate = 0;
+	nlink->lastDup = 0;
 
 	/* This new link is going to be the last link, so make next of
           it as NULL*/
@@ -54,14 +56,20 @@ void insert(struct Link** start, int in_pid, int in_burst, int in_priority)
 		{
 			if(nlink->pid == last->pid)
 			{
+				nlink->lastDup = 1;
 				nlink->duplicate = 1;
 				last->duplicate = 1;
+				if(last->lastDup == 1)
+				{
+					last->lastDup = 0;
+				}
 			}
 			if(last->next->next == NULL)
 			{
 				if(nlink->pid == last->next->pid)
 				{
 					nlink->duplicate = 1;
+					nlink->lastDup = 1;
 					last->next->duplicate = 1;
 				}
 			}
@@ -81,7 +89,7 @@ void printLinks(struct Link *link)
 {
 	while (link != NULL)
 	{
-		printf("%d->%d\n", link->pid, link->duplicate);
+		printf("%d->%d->%d\n", link->pid, link->duplicate, link->lastDup);
 		link = link->next;
 	}
 }
@@ -107,34 +115,6 @@ struct Link *getLink(struct Link *link, int index)
 	return link;
 
 }
-
-
-//int* flagss(struct Link *link, int p, int N, int *flags)
-//{
-//	for(int i = 1; i < p+1;i++)
-//	{
-//		flags[i] = 0;
-//	}
-//	for(int i = 0; i < N; i++)
-//	{
-//		struct Link *link1 = getLink(link, i);
-//
-//
-//		/**for loop to loop through the rest of the linkedList**/
-//		for(int j = i+1; j < N; j++)
-//		{
-//
-//			struct Link* link2 = getLink(link, j);
-//
-//			/**if its the last occurance of our pid calculate**/
-//			if(link1->pid == link2->pid)
-//			{
-//				flags[link2->pid] = 1;
-//			}
-//		}
-//	}
-//	return flags;
-//}
 
 /**
  * turnaround(head, p)
@@ -174,13 +154,6 @@ void turnwaitresp(struct Link *link, int p, int N)
 
 		if(link1->duplicate == 0)
 		{
-//			if(flags[i] == 1)
-//			{
-//				sum += totalBurst;
-//				wsum += arrival;
-//				rsum += totalBurst - arrival;
-//				continue;
-//			}
 			sum += totalBurst;
 			wsum += arrival;
 			rsum += totalBurst - arrival;
@@ -188,6 +161,13 @@ void turnwaitresp(struct Link *link, int p, int N)
 		}
 		else
 		{
+			if(link1->lastDup == 1)
+			{
+				sum += totalBurst;
+				wsum += arrival;
+				rsum += totalBurst - arrival;
+				continue;
+			}
 			if(link1->next == NULL)
 			{
 				sum += totalBurst;
@@ -278,7 +258,7 @@ int main(int argc, char** argv)
 		insert(&head, PID, burst, priority);
 	}
 
-	//printLinks(head);
+	printLinks(head);
 
 	printf("%d\n", p);
 	turnwaitresp(head, p, N);
