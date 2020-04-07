@@ -226,7 +226,7 @@ void turnwaitresp(struct Link *link, int p, int N)
 
 	printf("%d\n", nonVol);
 
-	printf("100\n");
+	printf("100.00\n");
 
 	double tput = (double)p/(double)totalBurst;
 
