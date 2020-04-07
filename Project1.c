@@ -177,11 +177,19 @@ void turnwaitresp(struct Link *link, int p, int N)
 			continue;
 		}
 
-		if(link1->next != NULL)
+				if(link1->next != NULL)
 		{
 			if(link1->pid == link1->next->pid)
 			{
 				count++;
+			}
+			if(link1->next->pid == link1->next->next->pid)
+			{
+				count++;
+				if(link1->pid == link1->next->pid)
+				{
+					count--;
+				}
 			}
 		}
 	}
