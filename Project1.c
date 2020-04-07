@@ -223,8 +223,10 @@ void turnwaitresp(struct Link *link, int p, int N)
 	}
 
 	nonVol = (N-count)-p;
-
-	printf("%d\n", nonVol);
+	if(nonVol < 0)
+		printf("0");
+	else
+		printf("%d\n", nonVol);
 
 	printf("100.00\n");
 
