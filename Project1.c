@@ -129,34 +129,6 @@ void nonVolantary(struct Link *link, int p, int N)
 
 
 /**
- * throughput
- * This calculation is the total p/total burst
- */
-void throughput(struct Link *link, int p)
-{
-	/**the throughput calculating variable**/
-	double tput = 0.00;
-
-	/**The total burst variable**/
-	int burst = 0;
-
-	/**
-	 * Traverese through the whole linkeList
-	 * this is to add the total burst
-	 */
-	while (link != NULL)
-	{
-		burst += link->burst;
-		link = link->next;
-	}
-
-	tput = (double)p/(double)burst;
-
-	printf("%.02f\n", tput);
-}
-
-
-/**
  * turnaround(head, p)
  * Completion Time - Arrival Time
  */
@@ -171,6 +143,8 @@ void turnwaitresp(struct Link *link, int p, int N)
 	double waverage = 0.0;
 	double raverage = 0.0;
 	int totalBurst = 0;
+	int nonVol = 0;
+	int count = 0;
 	int tsize = N;
 	int arrival = 0;
 	int sum = 0;
@@ -183,36 +157,41 @@ void turnwaitresp(struct Link *link, int p, int N)
 		flags[i] = 0;
 	}
 
-	int PID[tsize];
-	int burst[tsize];
-	int priority[tsize];
-
 
 	for(int i = 0; i < tsize; i++)
 	{
 		struct Link *link1 = getLink(link, i);
-		PID[i] = link1->pid;
-		burst[i] = link1->burst;
-		priority[i] = link1->priority;
 
 
 		/**adding current burst to total burst**/
-		totalBurst += burst[i];
+		totalBurst += link1->burst;
 
 		/**for loop to loop throught the rest of the linkedList**/
 		for(int j = i+1; j < tsize; j++)
 		{
+
+			struct Link* link2 = getLink(link, j);
+
 			/**if its the last occurance of our pid calculate**/
-			if(PID[i] != getLink(link, j)->pid)
+			if(link1->pid != link2->pid)
 			{
 				flag = 1;
 			}
 			else
 			{
 				flag = 0;
-				flags[getLink(link, j)->pid] = 1;
+				flags[link2->pid] = 1;
 			}
 		}
+
+		if(link1->next != NULL)
+		{
+			if(link1->pid == link1->next->pid)
+			{
+				count++;
+			}
+		}
+
 
 		if(flag == 1)
 		{
@@ -239,8 +218,19 @@ void turnwaitresp(struct Link *link, int p, int N)
 			}
 			continue;
 		}
+
+
 	}
 
+	nonVol = (N-count)-p;
+
+	printf("%d\n", nonVol);
+
+	printf("100\n");
+
+	double tput = (double)p/(double)totalBurst;
+
+	printf("%.02f\n", tput);
 
 	average = (double)sum/(double)p;
 	waverage = (double)wsum/(double)p;
