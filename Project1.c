@@ -259,7 +259,7 @@ int main(int argc, char** argv)
 	struct Link* head = NULL;
 
 	//bringing in the file this is for testing
-	FILE* input = fopen("OStest2.txt", "r");
+	FILE* input = fopen(argv[1], "r");
 
 	/**
 	 * reading in the file
