@@ -264,10 +264,6 @@ int main(int argc, char** argv)
 	int burst = 0;
 	int priority = 0;
 
-	/**
-	 * CPU Utilization
-	 */
-	double CPU_Utilization = 100.00;
 
 	/* Start with the empty list */
 	struct Link* head = NULL;
@@ -293,9 +289,6 @@ int main(int argc, char** argv)
 	}
 
 	printf("%d\n", p);
-	nonVolantary(head, p, N);
-	printf("%.02f\n", CPU_Utilization);
-	throughput(head, p);
 	turnwaitresp(head, p, N);
 
 
