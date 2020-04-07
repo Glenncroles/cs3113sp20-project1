@@ -15,6 +15,7 @@ struct Link
 	int pid;
 	int burst;
 	int priority;
+	int duplicate;
 	struct Link *next;
 };
 
@@ -25,12 +26,15 @@ void insert(struct Link** start, int in_pid, int in_burst, int in_priority)
 	/* allocate link memory */
 	struct Link* nlink = (struct Link*) malloc(sizeof(struct Link));
 
+	//struct Link * link = *start;
+
 	struct Link * last = *start;  //for puting into last postion
 
 	/*put in the data*/
 	nlink->burst = in_burst;
 	nlink->pid = in_pid;
 	nlink->priority = in_priority;
+	nlink->duplicate = 0;
 
 	/* This new link is going to be the last link, so make next of
           it as NULL*/
@@ -48,6 +52,20 @@ void insert(struct Link** start, int in_pid, int in_burst, int in_priority)
 		/*Else traverse till the last link */
 		while (last->next != NULL)
 		{
+			if(nlink->pid == last->pid)
+			{
+				nlink->duplicate = 1;
+				last->duplicate = 1;
+			}
+			if(last->next->next == NULL)
+			{
+				if(nlink->pid == last->next->pid)
+				{
+					nlink->duplicate = 1;
+					last->next->duplicate = 1;
+				}
+			}
+
 			last = last->next;
 		}
 
@@ -57,6 +75,16 @@ void insert(struct Link** start, int in_pid, int in_burst, int in_priority)
 	return;
 }
 
+
+// This function prints contents of linked list starting from begging to end
+void printLinks(struct Link *link)
+{
+	while (link != NULL)
+	{
+		printf("%d->%d\n", link->pid, link->duplicate);
+		link = link->next;
+	}
+}
 
 
 /**
@@ -81,32 +109,32 @@ struct Link *getLink(struct Link *link, int index)
 }
 
 
-int* flagss(struct Link *link, int p, int N, int *flags)
-{
-	for(int i = 1; i < p+1;i++)
-	{
-		flags[i] = 0;
-	}
-	for(int i = 0; i < N; i++)
-	{
-		struct Link *link1 = getLink(link, i);
-
-
-		/**for loop to loop through the rest of the linkedList**/
-		for(int j = i+1; j < N; j++)
-		{
-
-			struct Link* link2 = getLink(link, j);
-
-			/**if its the last occurance of our pid calculate**/
-			if(link1->pid == link2->pid)
-			{
-				flags[link2->pid] = 1;
-			}
-		}
-	}
-	return flags;
-}
+//int* flagss(struct Link *link, int p, int N, int *flags)
+//{
+//	for(int i = 1; i < p+1;i++)
+//	{
+//		flags[i] = 0;
+//	}
+//	for(int i = 0; i < N; i++)
+//	{
+//		struct Link *link1 = getLink(link, i);
+//
+//
+//		/**for loop to loop through the rest of the linkedList**/
+//		for(int j = i+1; j < N; j++)
+//		{
+//
+//			struct Link* link2 = getLink(link, j);
+//
+//			/**if its the last occurance of our pid calculate**/
+//			if(link1->pid == link2->pid)
+//			{
+//				flags[link2->pid] = 1;
+//			}
+//		}
+//	}
+//	return flags;
+//}
 
 /**
  * turnaround(head, p)
@@ -124,14 +152,14 @@ void turnwaitresp(struct Link *link, int p, int N)
 	int totalBurst = 0;
 	int nonVol = 0;
 	int count = 0;
-	int tsize = N;
+	//int tsize = N;
 	int arrival = 0;
 	int sum = 0;
 	int wsum = 0;
 	int rsum = 0;
-	int flag = 0;
-	int flagssss[N];
-	int* flags = flagss(link,p,N,flagssss);
+	//int flag = 0;
+	//int flagssss[N];
+	//int* flags = flagss(link,p,N,flagssss);
 
 
 
@@ -144,15 +172,15 @@ void turnwaitresp(struct Link *link, int p, int N)
 		totalBurst += link1->burst;
 
 
-		if(flags[link1->pid] == 0)
+		if(link1->duplicate == 0)
 		{
-			if(flags[i] == 1)
-			{
-				sum += totalBurst;
-				wsum += arrival;
-				rsum += totalBurst - arrival;
-				continue;
-			}
+//			if(flags[i] == 1)
+//			{
+//				sum += totalBurst;
+//				wsum += arrival;
+//				rsum += totalBurst - arrival;
+//				continue;
+//			}
 			sum += totalBurst;
 			wsum += arrival;
 			rsum += totalBurst - arrival;
@@ -231,7 +259,7 @@ int main(int argc, char** argv)
 	struct Link* head = NULL;
 
 	//bringing in the file this is for testing
-	FILE* input = fopen(argv[1], "r");
+	FILE* input = fopen("OStest2.txt", "r");
 
 	/**
 	 * reading in the file
@@ -249,6 +277,8 @@ int main(int argc, char** argv)
 
 		insert(&head, PID, burst, priority);
 	}
+
+	printLinks(head);
 
 	printf("%d\n", p);
 	turnwaitresp(head, p, N);
