@@ -207,7 +207,14 @@ void turnwaitresp(struct Link *link, int p, int N)
 
 	printf("%.02f\n", average);
 	printf("%.02f\n", waverage);
-	printf("%.02f\n", raverage);
+	if(waverage == 0)
+	{
+		printf("%.02f\n", 0.00);
+	}
+	else
+	{
+		printf("%.02f\n", raverage);
+	}
 }
 
 
