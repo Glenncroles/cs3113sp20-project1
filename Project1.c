@@ -211,7 +211,6 @@ void turnwaitresp(struct Link *link, int p, int N)
 			}
 			else if(link1->next == NULL)
 			{
-				sum += totalBurst;
 				wsum += arrival;
 				rsum += totalBurst - arrival;
 			}
