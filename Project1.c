@@ -188,15 +188,12 @@ void turnwaitresp(struct Link *link, int p, int N)
 		totalBurst += link1->burst;
 
 
+
+
 		if(link1->duplicate == 0)
 		{
 			sum += totalBurst;
-
-			arrival = totalBurst;
-
-			wsum += arrival;
-			rsum += totalBurst - arrival;
-
+			wsum += totalBurst;
 		}
 		else
 		{
@@ -228,15 +225,14 @@ void turnwaitresp(struct Link *link, int p, int N)
 			}
 		}
 
+
 	}
 
 
 
 	nonVol = N-count-p;
-	if(nonVol < 0)
-		printf("0\n");
-	else
-		printf("%d\n", nonVol);
+	printf("%d\n", nonVol);
+
 
 
 	printf("100.00\n");
@@ -251,14 +247,7 @@ void turnwaitresp(struct Link *link, int p, int N)
 
 	printf("%.02f\n", average);
 	printf("%.02f\n", waverage);
-	if(waverage == 0)
-	{
-		printf("%.02f\n", 0.00);
-	}
-	else
-	{
-		printf("%.02f\n", raverage);
-	}
+	printf("%.02f\n", raverage);
 }
 
 
