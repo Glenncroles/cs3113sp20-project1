@@ -69,20 +69,15 @@ void insert(struct Link** start, int in_pid, int in_burst, int in_priority)
 
 
 			}
-			if(last->next->next == NULL)
-			{
-				if(nlink->pid == last->next->pid)
-				{
-					nlink->duplicate = 1;
-					nlink->lastDup = 1;
-					last->next->duplicate = 1;
-					last->next->lastDup = 0;
-				}
-
-
-			}
 
 			last = last->next;
+		}
+		if(nlink->pid == last->pid)
+		{
+			nlink->duplicate = 1;
+			nlink->lastDup = 1;
+			last->duplicate = 1;
+			last->lastDup = 0;
 		}
 
 		/*Change the next of last link */
