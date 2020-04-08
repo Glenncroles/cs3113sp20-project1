@@ -230,7 +230,7 @@ void turnwaitresp(struct Link *link, int p, int N)
 
 
 
-	nonVol = N-count-p;
+	nonVol = N-count-p+1;
 	printf("%d\n", nonVol);
 
 
