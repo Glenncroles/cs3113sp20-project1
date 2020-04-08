@@ -17,6 +17,7 @@ struct Link
 	int priority;
 	int duplicate;
 	int lastDup;
+	int arrival;
 	struct Link *next;
 };
 
@@ -37,6 +38,7 @@ void insert(struct Link** start, int in_pid, int in_burst, int in_priority)
 	nlink->priority = in_priority;
 	nlink->duplicate = 0;
 	nlink->lastDup = 0;
+	nlink->arrival = 0;
 
 	/* This new link is going to be the last link, so make next of
           it as NULL*/
@@ -59,10 +61,13 @@ void insert(struct Link** start, int in_pid, int in_burst, int in_priority)
 				nlink->lastDup = 1;
 				nlink->duplicate = 1;
 				last->duplicate = 1;
+
 				if(last->lastDup == 1)
 				{
 					last->lastDup = 0;
 				}
+
+
 			}
 			if(last->next->next == NULL)
 			{
@@ -71,7 +76,10 @@ void insert(struct Link** start, int in_pid, int in_burst, int in_priority)
 					nlink->duplicate = 1;
 					nlink->lastDup = 1;
 					last->next->duplicate = 1;
+					last->next->lastDup = 0;
 				}
+
+
 			}
 
 			last = last->next;
@@ -89,7 +97,40 @@ void printLinks(struct Link *link)
 {
 	while (link != NULL)
 	{
-		printf("%d->%d->%d\n", link->pid, link->duplicate, link->lastDup);
+		printf("%d->%d->%d->%d\n", link->pid, link->duplicate, link->lastDup, link->arrival);
+		link = link->next;
+	}
+}
+
+void arrival(struct Link *link, int N)
+{
+	int pid[N];
+	int pos = 0;
+	int flag = 0;
+	while(link->next != NULL)
+	{
+		if(link->duplicate == 1)
+		{
+			for(int i = 0; i < pos; i++)
+			{
+				if(pid[i] == link->pid)
+				{
+					flag = 1;
+					break;
+				}
+			}
+			link->arrival = 1;
+			pid[pos] = link->pid;
+			pos++;
+		}
+		else
+		{
+			link->arrival = 1;
+		}
+		if(flag == 1)
+		{
+			link->arrival = 0;
+		}
 		link = link->next;
 	}
 }
@@ -146,7 +187,7 @@ void turnwaitresp(struct Link *link, int p, int N)
 	for(int i = 0; i < N; i++)
 	{
 		struct Link *link1 = getLink(link, i);
-
+		arrival = 0;
 
 		/**adding current burst to total burst**/
 		totalBurst += link1->burst;
@@ -154,13 +195,18 @@ void turnwaitresp(struct Link *link, int p, int N)
 
 		if(link1->duplicate == 0)
 		{
+			arrival = totalBurst;
 			sum += totalBurst;
 			wsum += arrival;
 			rsum += totalBurst - arrival;
-			arrival = totalBurst;
+
 		}
 		else
 		{
+			if(link1->arrival == 1)
+			{
+				arrival = totalBurst;
+			}
 			if(link1->lastDup == 1)
 			{
 				sum += totalBurst;
@@ -174,10 +220,11 @@ void turnwaitresp(struct Link *link, int p, int N)
 				wsum += arrival;
 				rsum += totalBurst - arrival;
 			}
+
 			continue;
 		}
 
-				if(link1->next != NULL)
+		if(link1->next != NULL)
 		{
 			if(link1->pid == link1->next->pid)
 			{
@@ -186,13 +233,15 @@ void turnwaitresp(struct Link *link, int p, int N)
 			if(link1->next->next != NULL && link1->next->pid == link1->next->next->pid)
 			{
 				count++;
+
 			}
 		}
+
 	}
 
 
 
-	nonVol = (N-count)-p;
+	nonVol = N-count-p;
 	if(nonVol < 0)
 		printf("0\n");
 	else
@@ -250,7 +299,7 @@ int main(int argc, char** argv)
 	struct Link* head = NULL;
 
 	//bringing in the file this is for testing
-	FILE* input = fopen(argv[1], "r");
+	FILE* input = fopen("OStest1.txt", "r");
 
 	/**
 	 * reading in the file
@@ -268,7 +317,7 @@ int main(int argc, char** argv)
 
 		insert(&head, PID, burst, priority);
 	}
-
+	arrival(head,N);
 	//printLinks(head);
 
 	printf("%d\n", p);
