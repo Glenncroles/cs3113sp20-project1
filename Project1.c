@@ -176,6 +176,7 @@ void turnwaitresp(struct Link *link, int p, int N)
 	//int flag = 0;
 	//int flagssss[N];
 	//int* flags = flagss(link,p,N,flagssss);
+	int arrivalTimes[p+1];
 
 
 
@@ -184,27 +185,33 @@ void turnwaitresp(struct Link *link, int p, int N)
 		struct Link *link1 = getLink(link, i);
 		arrival = 0;
 
+
+
+		if(link1->arrival == 1)
+		{
+			arrivalTimes[link1->pid] = totalBurst;
+		}
+
 		/**adding current burst to total burst**/
 		totalBurst += link1->burst;
 
 
 
-
 		if(link1->duplicate == 0)
 		{
+			arrival = arrivalTimes[link1->pid];
 			sum += totalBurst;
-			wsum += totalBurst;
+			wsum += arrival;
+			rsum += totalBurst - arrival;
 		}
 		else
 		{
-
-			if(link1->arrival == 1)
-			{
-				arrival = totalBurst;
-			}
 			if(link1->lastDup == 1)
 			{
 				sum += totalBurst;
+
+				arrival = arrivalTimes[link1->pid];
+
 				wsum += arrival;
 				rsum += totalBurst - arrival;
 
@@ -223,10 +230,7 @@ void turnwaitresp(struct Link *link, int p, int N)
 				count++;
 			}
 		}
-
-
 	}
-
 
 
 	nonVol = N-count-p+1;
