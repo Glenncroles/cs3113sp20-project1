@@ -202,7 +202,7 @@ void turnwaitresp(struct Link *link, int p, int N)
 			arrival = arrivalTimes[link1->pid];
 			sum += totalBurst;
 			wsum += arrival;
-			rsum += totalBurst - arrival;
+			rsum += link1->burst;
 		}
 		else
 		{
@@ -215,11 +215,6 @@ void turnwaitresp(struct Link *link, int p, int N)
 				wsum += arrival;
 				rsum += totalBurst - arrival;
 
-			}
-			else if(link1->next == NULL)
-			{
-				wsum += arrival;
-				rsum += totalBurst - arrival;
 			}
 		}
 
