@@ -190,14 +190,17 @@ void turnwaitresp(struct Link *link, int p, int N)
 
 		if(link1->duplicate == 0)
 		{
-			arrival = totalBurst;
 			sum += totalBurst;
+
+			arrival = totalBurst;
+
 			wsum += arrival;
 			rsum += totalBurst - arrival;
 
 		}
 		else
 		{
+
 			if(link1->arrival == 1)
 			{
 				arrival = totalBurst;
@@ -207,16 +210,14 @@ void turnwaitresp(struct Link *link, int p, int N)
 				sum += totalBurst;
 				wsum += arrival;
 				rsum += totalBurst - arrival;
-				continue;
+
 			}
-			if(link1->next == NULL)
+			else if(link1->next == NULL)
 			{
 				sum += totalBurst;
 				wsum += arrival;
 				rsum += totalBurst - arrival;
 			}
-
-			continue;
 		}
 
 		if(link1->next != NULL)
